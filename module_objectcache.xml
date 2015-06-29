@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_objectcache" default="compile.module.objectcache">
+  <dirname property="module.objectcache.basedir" file="${ant.file.module_objectcache}"/>
+  
+  <property name="module.jdk.home.objectcache" value="${jdk.home.1.8}"/>
+  <property name="module.jdk.bin.objectcache" value="${jdk.bin.1.8}"/>
+  <property name="module.jdk.classpath.objectcache" value="jdk.classpath.1.8"/>
+  
+  <property name="compiler.args.objectcache" value="-encoding UTF-8 -source 1.6 -target 1.6 ${compiler.args}"/>
+  
+  <property name="objectcache.output.dir" value="${module.objectcache.basedir}/out/production/ObjectCache"/>
+  <property name="objectcache.testoutput.dir" value="${module.objectcache.basedir}/out/test/ObjectCache"/>
+  
+  <path id="objectcache.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="objectcache.module.production.classpath">
+    <path refid="${module.jdk.classpath.objectcache}"/>
+  </path>
+  
+  <path id="objectcache.runtime.production.module.classpath">
+    <pathelement location="${objectcache.output.dir}"/>
+  </path>
+  
+  <path id="objectcache.module.classpath">
+    <path refid="${module.jdk.classpath.objectcache}"/>
+    <pathelement location="${objectcache.output.dir}"/>
+  </path>
+  
+  <path id="objectcache.runtime.module.classpath">
+    <pathelement location="${objectcache.testoutput.dir}"/>
+    <pathelement location="${objectcache.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.objectcache">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.objectcache">
+    <patternset refid="excluded.from.module.objectcache"/>
+  </patternset>
+  
+  <path id="objectcache.module.sourcepath">
+    <dirset dir="${module.objectcache.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.objectcache" depends="compile.module.objectcache.production,compile.module.objectcache.tests" description="Compile module ObjectCache"/>
+  
+  <target name="compile.module.objectcache.production" depends="register.custom.compilers" description="Compile module ObjectCache; production classes">
+    <mkdir dir="${objectcache.output.dir}"/>
+    <javac2 destdir="${objectcache.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.objectcache}/javac">
+      <compilerarg line="${compiler.args.objectcache}"/>
+      <bootclasspath refid="objectcache.module.bootclasspath"/>
+      <classpath refid="objectcache.module.production.classpath"/>
+      <src refid="objectcache.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.objectcache"/>
+    </javac2>
+    
+    <copy todir="${objectcache.output.dir}">
+      <fileset dir="${module.objectcache.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.objectcache.tests" depends="register.custom.compilers,compile.module.objectcache.production" description="compile module ObjectCache; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.objectcache" description="cleanup module">
+    <delete dir="${objectcache.output.dir}"/>
+    <delete dir="${objectcache.testoutput.dir}"/>
+  </target>
+</project>
